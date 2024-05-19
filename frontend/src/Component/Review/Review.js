@@ -1,20 +1,17 @@
 import React, { useState } from "react";
 import './Review.css';
 import ReviewHistory from "./ReviewHistory";
+
 export default function Review() {
-
-
-        // THE Form will be send in a way of json
     const [formData, setFormData] = useState({
         name: '',
         review: '' 
     });
 
-
     const [responseMessage, setResponseMessage] = useState('');
 
     const handleFormSubmit = async (event) => {
-        event.preventDefault();                             // prevent the page from refreshing
+        event.preventDefault();
 
         try {
             const response = await fetch('http://localhost:80?api=second', {
@@ -63,16 +60,15 @@ export default function Review() {
                     onChange={handleInputChange}
                 />
                 <textarea
-                    name="review" // Change 'comment' to 'review'
-                    placeholder="Your review" // Change 'comment' to 'review'
-                    value={formData.review} // Change 'comment' to 'review'
+                    name="review"
+                    placeholder="Your review"
+                    value={formData.review}
                     onChange={handleInputChange}
                 ></textarea>
                 <button type="submit">Submit Review</button>
             </form>
             {responseMessage && <div className="response-message">{responseMessage}</div>}
         </div>
-
         </>
     );
 }
