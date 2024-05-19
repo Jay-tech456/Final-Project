@@ -14,8 +14,8 @@ export default function Service() {
 
     return (
         <div className="services">
-            <h1>Our <span>Services</span></h1>
-            <p>Explore our wide range of delicious food and beverages. From gourmet burgers to refreshing drinks, we have something for everyone.</p>
+            <h1>Our Service </h1>
+            <h6>Explore our wide range of delicious food and beverages. From gourmet burgers to refreshing drinks, we have something for everyone.</h6>
             <div className="services-container">
                 {services.map((service, index) => (
                     <div key={index} className="service-card">
