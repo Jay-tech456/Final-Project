@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbutton from "./Navbutton"; 
 import { Modal, Button, Form } from 'react-bootstrap';
-import "./Navbar.css"; 
+import './Navbar.css';
 
 const Navbar = () => {
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -70,7 +70,7 @@ useEffect(() => {
         setShouldLogin(false);
       });
   }
-}, [shouldLogin]); 
+}, [shouldLogin, username, password]);
 
 
 

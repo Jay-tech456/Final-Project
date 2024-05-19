@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from "react";
-import "./Review.css"; 
-// Review Card Component
+import "./ReviewHistory.css";
+
 function ReviewCard({ review }) {
   return (
-    <div className = "card">
+    <div className="card">
       <h3>{review.Name}</h3>
       <p>{review.Review}</p>
     </div>
   );
 }
 
-// Review History Component
 export default function ReviewHistory() {
   const [prevReviews, setPrevReviews] = useState([]);
 
@@ -29,9 +28,9 @@ export default function ReviewHistory() {
   }, []);
 
   return (
-    <div>
+    <div className="review-history">
       <h1>Previous Reviews</h1>
-      <div style={{ display: "flex", flexWrap: "wrap" }}>
+      <div className="reviews-container">
         {prevReviews.map((review, index) => (
           <ReviewCard key={index} review={review} />
         ))}
