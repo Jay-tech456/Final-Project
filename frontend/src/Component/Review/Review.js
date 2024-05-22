@@ -5,7 +5,7 @@ import ReviewHistory from "./ReviewHistory";
 export default function Review() {
     const [formData, setFormData] = useState({
         name: '',
-        review: ''
+        review: '' 
     });
 
     const [responseMessage, setResponseMessage] = useState('');
@@ -27,9 +27,7 @@ export default function Review() {
             }
 
             const responseData = await response.json();
-            console.log('Response data:', responseData); // Log the response data for debugging
-
-            setResponseMessage(responseData.message || 'Review submitted successfully!');
+            setResponseMessage(responseData.message);
 
             setFormData({
                 name: '',
@@ -37,7 +35,6 @@ export default function Review() {
             });
         } catch (error) {
             console.error('Error submitting review:', error);
-            setResponseMessage('Error submitting review: ' + error.message);
         }
     };
 
@@ -51,27 +48,28 @@ export default function Review() {
 
     return (
         <>
-            <ReviewHistory />
-            <div className="container">
-                <h1>Add A Review</h1>
-                <form onSubmit={handleFormSubmit}>
-                    <input
-                        type="text"
-                        name="name"
-                        placeholder="Your name"
-                        value={formData.name}
-                        onChange={handleInputChange}
-                    />
-                    <textarea
-                        name="review"
-                        placeholder="Your review"
-                        value={formData.review}
-                        onChange={handleInputChange}
-                    ></textarea>
-                    <button type="submit">Submit Review</button>
-                </form>
-                {responseMessage && <div className="response-message">{responseMessage}</div>}
-            </div>
+        <div className="container">
+            <h1>⭐ Share Your Thoughts ⭐</h1>
+            <form onSubmit={handleFormSubmit}>
+                <input
+                    type="text"
+                    name="name"
+                    placeholder="Your name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                />
+                <textarea
+                    name="review"
+                    placeholder="Your review"
+                    value={formData.review}
+                    onChange={handleInputChange}
+                ></textarea>
+                <button type="submit">Submit Review</button>
+            </form>
+            {responseMessage && <div className="response-message">{responseMessage}</div>}
+        </div>
+
+        <ReviewHistory />
         </>
     );
 }

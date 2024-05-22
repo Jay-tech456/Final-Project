@@ -5,87 +5,111 @@ import './Navbar.css';
 
 const Navbar = () => {
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showCreateAccountModal, setShowCreateAccountModal] = useState(false);
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState(''); 
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [shouldLogin, setShouldLogin] = useState(false);
-  const [shouldCreateAccount, setShouldCreateAccount] = useState(false); 
+  const [shouldCreateAccount, setShouldCreateAccount] = useState(false);
 
-  const [loginUserName, setLoginUserName] = useState('Login'); 
-  const [createAccount, setCreateAccount] = useState('Create Account')
+  const [loginUserName, setLoginUserName] = useState('Login');
+  const [createAccount, setCreateAccount] = useState('Create Account');
 
-  /* **************** The Use Effect will handle the logic within the login properties ********************
-      PRE-REQ --> LOGIC
-              --> JSON Body:  User inputed and sent to the backend as a JSON Format
+  useEffect(() => {
+    if (shouldLogin) {
+      const loginData = {
+        username: username,
+        password: password,
+      };
 
+      fetch('http://localhost:80?api=first', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(loginData),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then((data) => {
+          alert(data.message);
+          if (data.message === 'Login successful') {
+            setLoginUserName(username); // Update login user name
+            setCreateAccount(''); // Hide create account button
+          }
+          setShouldLogin(false);
+          setShowLoginModal(false);
+        })
+        .catch((error) => {
+          alert(error);
+          setShouldLogin(false);
+        });
+    }
+  }, [shouldLogin, username, password]);
 
-        IF THE LOGIN IS SUCCESSFUL: 
-                  THEN THE USERNAME SHOULD CHANGE AND THE CREATE ACCOUNT SHOULD DISAPPEAR 
+  useEffect(() => {
+    if (shouldCreateAccount) {
+      if (password !== confirmPassword) {
+        alert("Passwords do not match!");
+        setShouldCreateAccount(false);
+        return;
+      }
 
-        ELSE IF LOGIN FAILS: 
-                  THEN AN EROR WILL BE THROWN AND THE USER HAS TO RE-ENTER THE PROPER REDENTIALS
+      const createData = {
+        username: username,
+        password: password,
+      };
 
-
-      The call should be make to the first API Gateway which will handle the login behavior
-  ********************************************************************************/ 
-
-useEffect(() => {
-  if (shouldLogin) {
-    const loginData = {
-      username: username,
-      password: password,
-    };
-
-    // ************ Sending a Request to the First API Gateway ****************** //
-    fetch('http://localhost:80?api=first', {
-      method: 'POST',
-      headers: {
+      fetch('http://localhost:80?api=first', {
+    method: 'PUT',
+    headers: {
         'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(loginData),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then((data) => {               // Condition of data being successful
-        
-        alert(data.message);
-        setLoginUserName(data.username);
-        setCreateAccount(''); 
-        setShouldLogin(false);
-      
-    
-        if (data.message === 'Login successful') {
-          setLoginUserName(username); // Update login user name
-          setCreateAccount(''); // Hide create account button
-        }
-      })
-      .catch((error) => {
-        // console.error(error);
-        alert(error); 
-        setShouldLogin(false);
-      });
-  }
-}, [shouldLogin, username, password]);
-
-
+    },
+    body: JSON.stringify(createData),
+})
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then((data) => {
+          alert(data.message);
+          if (data.message === 'Account created successfully') {
+            setLoginUserName(username); // Update login user name
+            setCreateAccount(''); // Hide create account button
+          }
+          setShouldCreateAccount(false);
+          setShowCreateAccountModal(false);
+        })
+        .catch((error) => {
+          alert(error);
+          setShouldCreateAccount(false);
+        });
+    }
+  }, [shouldCreateAccount, username, password, confirmPassword]);
 
   // Handler for login button click
   const handleLoginClick = () => {
-    setShowLoginModal(false);
     setShouldLogin(true);
+  };
+
+  // Handler for create account button click
+  const handleCreateAccountClick = () => {
+    setShouldCreateAccount(true);
   };
 
   // Handler for button clicks
   const handleClick = (name) => {
     if (name === 'Login') {
-      setShowLoginModal(true); 
-    } else if(name ==="Create Account"){
-      setShouldCreateAccount(true); 
+      setShowLoginModal(true);
+    } else if (name === "Create Account") {
+      setShowCreateAccountModal(true);
     }
   };
 
@@ -93,7 +117,7 @@ useEffect(() => {
     <div className="navbar-container">
       {/* Button to trigger login modal */}
       <Navbutton name={loginUserName} onClick={() => handleClick('Login')} />
-      <Navbutton name= {createAccount} onClick={() => handleClick('Create Account')} />
+      <Navbutton name={createAccount} onClick={() => handleClick('Create Account')} />
 
       {/* Login Modal */}
       <Modal show={showLoginModal} onHide={() => setShowLoginModal(false)}>
@@ -107,7 +131,7 @@ useEffect(() => {
               <Form.Control
                 type="text"
                 value={username}
-                onChange={(e) => setUsername(e.target.value)} 
+                onChange={(e) => setUsername(e.target.value)}
               />
             </Form.Group>
             <Form.Group controlId="formPassword">
@@ -115,7 +139,7 @@ useEffect(() => {
               <Form.Control
                 type="password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)} 
+                onChange={(e) => setPassword(e.target.value)}
               />
             </Form.Group>
           </Form>
@@ -127,9 +151,9 @@ useEffect(() => {
       </Modal>
 
       {/* Create Account Modal */}
-      <Modal show={shouldCreateAccount} onHide={() => setShouldCreateAccount(false)}>
+      <Modal show={showCreateAccountModal} onHide={() => setShowCreateAccountModal(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Login</Modal.Title>
+          <Modal.Title>Create Account</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
@@ -138,30 +162,30 @@ useEffect(() => {
               <Form.Control
                 type="text"
                 value={username}
-                onChange={(e) => setUsername(e.target.value)} 
+                onChange={(e) => setUsername(e.target.value)}
               />
             </Form.Group>
             <Form.Group controlId="formPassword">
               <Form.Label>Password</Form.Label>
               <Form.Control
                 type="password"
-                value={password} 
-                onChange={(e) => setPassword(e.target.value)} 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
             </Form.Group>
-            <Form.Group controlId="formPassword">
+            <Form.Group controlId="formConfirmPassword">
               <Form.Label>Confirm Password</Form.Label>
               <Form.Control
                 type="password"
-                value={confirmPassword} 
-                onChange={(e) => setConfirmPassword(e.target.value)} 
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
               />
             </Form.Group>
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() =>setConfirmPassword(false)}>Cancel</Button>
-          <Button variant="primary" onClick={handleLoginClick}>Create Account</Button>
+          <Button variant="secondary" onClick={() => setShowCreateAccountModal(false)}>Cancel</Button>
+          <Button variant="primary" onClick={handleCreateAccountClick}>Create Account</Button>
         </Modal.Footer>
       </Modal>
     </div>
